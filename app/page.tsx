@@ -6,40 +6,30 @@ export default function Home() {
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const [result, setResult] = useState({
-    title: "",
-    reason: ""
-  })
+  const [result, setResult] = useState("")
 
   const handleRecommend = async () => {
+    if (!input.trim()) return
+
     setLoading(true)
+    setResult("")
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1500)
-    )
+    try {
+      const response = await fetch("/api/recommend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          input
+        })
+      })
 
-    const text = input.toLowerCase()
+      const data = await response.json()
 
-    if (text.includes("懸疑")) {
-      setResult({
-        title: "東方快車謀殺案",
-        reason: "適合喜歡推理與緊張氛圍的讀者。"
-      })
-    } else if (text.includes("愛情")) {
-      setResult({
-        title: "傲慢與偏見",
-        reason: "適合喜歡細膩情感與角色互動的讀者。"
-      })
-    } else if (text.includes("成長")) {
-      setResult({
-        title: "原子習慣",
-        reason: "適合想改善生活與建立習慣的人。"
-      })
-    } else {
-      setResult({
-        title: "被討厭的勇氣",
-        reason: "適合作為通用型人生思考閱讀。"
-      })
+      setResult(data.result)
+    } catch (error) {
+      setResult("AI 回應失敗，請稍後再試。")
     }
 
     setLoading(false)
@@ -108,47 +98,22 @@ export default function Home() {
           transition: "0.2s"
         }}
       >
-        {loading ? "分析中..." : "開始推薦"}
+        {loading ? "AI 分析中..." : "開始推薦"}
       </button>
 
-      {result.title && (
+      {result && (
         <div
           style={{
             marginTop: 32,
             padding: 24,
             borderRadius: 24,
             background: "#1b1b1b",
-            border: "1px solid #333"
+            border: "1px solid #333",
+            whiteSpace: "pre-wrap",
+            lineHeight: 1.8
           }}
         >
-          <div
-            style={{
-              fontSize: 14,
-              color: "#888",
-              marginBottom: 12
-            }}
-          >
-            推薦書籍
-          </div>
-
-          <h2
-            style={{
-              fontSize: 30,
-              marginBottom: 16
-            }}
-          >
-            {result.title}
-          </h2>
-
-          <p
-            style={{
-              lineHeight: 1.8,
-              color: "#ccc",
-              fontSize: 16
-            }}
-          >
-            {result.reason}
-          </p>
+          {result}
         </div>
       )}
     </main>

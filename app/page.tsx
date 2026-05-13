@@ -7,15 +7,37 @@ export default function Home() {
   const [result, setResult] = useState("")
 
   const handleRecommend = () => {
-    setResult(`
-📖 推薦書籍：原子習慣
-
-✨ 推薦理由：
-你看起來想提升自己，而且希望用比較輕鬆的方式開始改變生活。
-
-🕒 適合閱讀時機：
-晚上放鬆時慢慢看。
-`)
+    const text = input.toLowerCase()
+  
+    if (text.includes("懸疑")) {
+      setResult(`
+  推薦書籍：東方快車謀殺案
+  
+  推薦理由：
+  適合喜歡推理與緊張氛圍的讀者。
+  `)
+    } else if (text.includes("愛情")) {
+      setResult(`
+  推薦書籍：傲慢與偏見
+  
+  推薦理由：
+  適合喜歡細膩情感與角色互動的讀者。
+  `)
+    } else if (text.includes("成長")) {
+      setResult(`
+  推薦書籍：原子習慣
+  
+  推薦理由：
+  適合想改善生活與建立習慣的人。
+  `)
+    } else {
+      setResult(`
+  推薦書籍：被討厭的勇氣
+  
+  推薦理由：
+  適合作為通用型人生思考閱讀。
+  `)
+    }
   }
 
   return (

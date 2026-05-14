@@ -2,11 +2,19 @@
 
 import { useState } from "react"
 
+type BookResult = {
+  title: string
+  author: string
+  reason: string
+}
+
 export default function Home() {
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState("")
-  const [history, setHistory] = useState<string[]>([])
+
+  const [result, setResult] = useState<BookResult | null>(null)
+
+  const [history, setHistory] = useState<BookResult[]>([])
 
   const handleRecommend = async () => {
     if (!input.trim()) return
@@ -26,14 +34,18 @@ export default function Home() {
 
       const data = await response.json()
 
-      setResult(data.result)
+      setResult(data)
 
       setHistory(prev => {
-        const updated = [data.result, ...prev]
+        const updated = [data, ...prev]
         return updated.slice(0, 5)
       })
-    } catch (error) {
-      setResult("AI 回應失敗，請稍後再試。")
+    } catch {
+      setResult({
+        title: "錯誤",
+        author: "-",
+        reason: "AI 回應失敗，請稍後再試。"
+      })
     }
 
     setLoading(false)
@@ -69,7 +81,7 @@ export default function Home() {
 
       <textarea
         value={input}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={e => setInput(e.target.value)}
         placeholder="例如：最近有點迷茫，想看能讓人重新振作的書..."
         style={{
           width: "100%",
@@ -135,32 +147,29 @@ export default function Home() {
         >
           <div
             style={{
-              fontSize: 24,
-              fontWeight: 700,
-              marginBottom: 12
+              fontSize: 28,
+              fontWeight: 700
             }}
           >
-            {result.match(/書名：(.*)/)?.[1]}
+            {result.title}
           </div>
 
           <div
             style={{
-              fontSize: 15,
-              color: "#999",
-              marginBottom: 20
+              marginTop: 10,
+              color: "#999"
             }}
           >
-            作者：
-            {result.match(/作者：(.*)/)?.[1]}
+            作者：{result.author}
           </div>
 
           <div
             style={{
-              fontSize: 16,
+              marginTop: 20,
               whiteSpace: "pre-wrap"
             }}
           >
-            {result.match(/推薦理由：(.*)/s)?.[1]}
+            {result.reason}
           </div>
         </div>
       )}
@@ -169,7 +178,7 @@ export default function Home() {
         <div style={{ marginTop: 40 }}>
           <div
             style={{
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: 700,
               marginBottom: 16
             }}
@@ -189,31 +198,29 @@ export default function Home() {
                 key={index}
                 onClick={() => setResult(item)}
                 style={{
-                  padding: 16,
+                  padding: 18,
                   borderRadius: 16,
-                  background: "#161616",
-                  border: "1px solid #2a2a2a",
-                  cursor: "pointer",
-                  transition: "0.2s"
+                  background: "#171717",
+                  border: "1px solid #2b2b2b",
+                  cursor: "pointer"
                 }}
               >
                 <div
                   style={{
-                    fontWeight: 700,
-                    marginBottom: 6
+                    fontWeight: 700
                   }}
                 >
-                  {item.match(/書名：(.*)/)?.[1]}
+                  {item.title}
                 </div>
 
                 <div
                   style={{
+                    marginTop: 6,
                     color: "#888",
                     fontSize: 14
                   }}
                 >
-                  作者：
-                  {item.match(/作者：(.*)/)?.[1]}
+                  作者：{item.author}
                 </div>
               </div>
             ))}

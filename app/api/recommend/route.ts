@@ -15,7 +15,20 @@ export async function POST(req: Request) {
             {
               role: "system",
               content:
-                "你是一個專業電子書推薦助手，請推薦一本適合的書並簡短說明理由。"
+                `
+              你是一個專業電子書推薦助手。
+
+              請一定要使用以下格式回答：
+
+              書名：
+              作者：
+              推薦理由：
+
+              不要使用 markdown。
+              不要加星號。
+              不要加編號。
+              內容保持簡潔。
+              `
             },
             {
               role: "user",

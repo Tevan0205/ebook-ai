@@ -82,24 +82,41 @@ export default function Home() {
         }}
       />
 
-      <button
-        onClick={handleRecommend}
-        disabled={loading}
-        style={{
-          marginTop: 24,
-          padding: "16px 28px",
-          borderRadius: 16,
-          border: "none",
-          background: "#4f46e5",
-          color: "white",
-          fontSize: 16,
-          cursor: "pointer",
-          opacity: loading ? 0.6 : 1,
-          transition: "0.2s"
-        }}
-      >
-        {loading ? "AI 分析中..." : "開始推薦"}
-      </button>
+<button
+  onClick={handleRecommend}
+  disabled={loading}
+  style={{
+    marginTop: 24,
+    padding: "16px 28px",
+    borderRadius: 16,
+    border: "none",
+    background: loading ? "#5b52d6" : "#4f46e5",
+    color: "white",
+    fontSize: 16,
+    fontWeight: 600,
+    cursor: loading ? "not-allowed" : "pointer",
+    opacity: loading ? 0.8 : 1,
+    transition: "0.2s",
+    display: "flex",
+    alignItems: "center",
+    gap: 10
+  }}
+>
+  {loading && (
+    <div
+      style={{
+        width: 16,
+        height: 16,
+        border: "2px solid rgba(255,255,255,0.4)",
+        borderTop: "2px solid white",
+        borderRadius: "50%",
+        animation: "spin 1s linear infinite"
+      }}
+    />
+  )}
+
+  {loading ? "AI 分析中..." : "開始推薦"}
+</button>
 
       {result && (
         <div
@@ -116,6 +133,19 @@ export default function Home() {
           {result}
         </div>
       )}
+
+      <style jsx global>{`
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
+      
     </main>
   )
 }

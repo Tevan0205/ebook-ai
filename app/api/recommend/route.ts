@@ -15,7 +15,7 @@ export async function POST(req: Request) {
           {
             role: "system",
             content:
-              "你是一個書籍推薦助手。請只回傳 JSON 格式，不要有 markdown。格式必須是：{\"title\":\"書名\",\"author\":\"作者\",\"reason\":\"推薦理由\"}"
+              '你是一個書籍推薦助手。你只能回傳純 JSON，不准加 markdown、不准加說明文字。格式必須是：{"title":"書名","author":"作者","reason":"推薦理由"}'
           },
           {
             role: "user",
@@ -28,8 +28,13 @@ export async function POST(req: Request) {
 
   const data = await response.json()
 
-  const content =
+  let content =
     data.choices?.[0]?.message?.content || "{}"
+
+  content = content
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim()
 
   try {
     const parsed = JSON.parse(content)
@@ -39,9 +44,11 @@ export async function POST(req: Request) {
       author: parsed.author || "未知作者",
       reason: parsed.reason || "沒有推薦理由"
     })
-  } catch {
+  } catch (error) {
+    console.log(content)
+
     return Response.json({
-      title: "AI 回應格式錯誤",
+      title: "AI 格式錯誤",
       author: "-",
       reason: content
     })
